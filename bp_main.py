@@ -7,6 +7,7 @@ import keras.callbacks
 
 from clf import lenet
 import generator
+import bpm_utils
 
 # Set Logger
 logger = getLogger(__name__)
@@ -38,7 +39,7 @@ if conf.clf_vis_path:
 
 if conf.weights_path.is_file():
     model.load_weights(conf.weights_path, by_name=True)
-
+    logger.info("Loaded model weight for fine-tuning")
 callbacks = [keras.callbacks.TerminateOnNaN(),
              keras.callbacks.ModelCheckpoint(filepath=conf.save_model_path.as_posix(),
                                              verbose=1,
@@ -51,15 +52,33 @@ callbacks = [keras.callbacks.TerminateOnNaN(),
                                                min_lr=conf.clf_lr)]
 train_gen, val_gen = generator.dir_gen(conf)
 
-logger.info("Training")
-model.fit_generator(train_gen,
-                    steps_per_epoch=conf.train_steps,
-                    epochs=conf.epochs,
-                    verbose=conf.verbose,
-                    workers=conf.workers,
-                    max_queue_size=conf.max_queue_size,
-                    use_multiprocessing=conf.use_multiprocessing,
-                    callbacks=callbacks,
-                    validation_data=val_gen,
-                    validation_steps=conf.val_steps)
-logger.info("Finished")
+if conf.stage in ['train', 'all']:
+    logger.info("Training")
+    model.fit_generator(train_gen,
+                        steps_per_epoch=conf.train_steps,
+                        epochs=conf.epochs,
+                        verbose=conf.train_verbose,
+                        workers=conf.workers,
+                        max_queue_size=conf.max_queue_size,
+                        use_multiprocessing=conf.use_multiprocessing,
+                        callbacks=callbacks,
+                        validation_data=val_gen,
+                        validation_steps=conf.val_steps)
+    logger.info("Finished training")
+
+if conf.stage in ['eval', 'all']:
+    logger.info("Evaluating")
+    eval_data, eval_label = bpm_utils.fetch_datalist_with_label(conf.eval_data_path, conf)
+    if conf.save_model_path.exists():
+        model.load_weights(conf.save_model_path.as_posix(), by_name=True)
+        logger.info("Loaded save model weight")
+
+    print(eval_data.shape)
+    print(eval_label.shape)
+    eval = model.evaluate(x=eval_data,
+                          y=eval_label,
+                          batch_size=conf.batch_size,
+                          verbose=conf.eval_verbose,
+                          sample_weight=conf.sample_weight)
+    print("Evaluate result: {}".format(eval))
+    logger.info("Finished evaluating")

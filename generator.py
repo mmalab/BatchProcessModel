@@ -25,7 +25,7 @@ def dir_gen(config):
         ### for validation
         train_datagenerator = train_datagen.flow_from_directory(
             Path(config.data_path, 'train').as_posix(),
-            target_size = (config.img_size, config.img_size),
+            target_size = config.img_size,
             batch_size = config.batch_size,
             class_mode=config.gen_class,
             color_mode=config.gen_color
@@ -33,7 +33,7 @@ def dir_gen(config):
         ### for training
         val_datagenerator = val_datagen.flow_from_directory(
             Path(config.data_path, 'validation').as_posix(),
-            target_size = (config.img_size, config.img_size),
+            target_size = config.img_size,
             batch_size = config.batch_size,
             class_mode=config.gen_class,
             color_mode=config.gen_color

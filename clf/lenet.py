@@ -13,8 +13,8 @@ class Lenet(Baseclf):
         # First Layer
         model.add(Conv2D(32,
                          (5, 5),
-                         input_shape=(self.config.img_size,
-                                      self.config.img_size,
+                         input_shape=(self.config.img_size[0],
+                                      self.config.img_size[1],
                                       self.config.channel)))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
