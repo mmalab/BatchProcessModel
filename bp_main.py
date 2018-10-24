@@ -18,17 +18,15 @@ logger.addHandler(handler)
 logger.propagate = False
 logger.info("Executing {}".format(__name__))
 
-# Set session
 logger.info("Setting GPU")
 sess_conf = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
 session = tf.Session(config=sess_conf)
 K.set_session(session)
 
-logger.info("Building Model")
-# Fetch config
+logger.info("Loading config")
 conf = config.Config()
 
-# Main
+logger.info("Building Model")
 arch = lenet.Lenet(conf)
 model = arch.build_model()
 if conf.clf_vis_path:
