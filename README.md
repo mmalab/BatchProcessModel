@@ -14,10 +14,15 @@ $ python3 bp_main.py
 `config.py`内で`stage='eval'`とする
 
 ## Now Avaliable
-順次追加実装
+- Classification
+  - LeNet
 
-### Classification
+### Training
+#### Classification
+- flow_from_directory
 
-```
-LeNet(clf/lenet.py)
-```
+### Evaluate
+#### Classification
+- modelによるevaluate
+- evaluateに対するPrecision, Recall, F-measure
+- ROC曲線とAUC
