@@ -7,7 +7,7 @@ import keras.callbacks
 
 from clf import lenet
 import generator
-import bpm_utils
+import bp_utils
 
 # Set Logger
 logger = getLogger(__name__)
@@ -68,13 +68,11 @@ if conf.stage in ['train', 'all']:
 
 if conf.stage in ['eval', 'all']:
     logger.info("Evaluating")
-    eval_data, eval_label = bpm_utils.fetch_datalist_with_label(conf.eval_data_path, conf)
+    eval_data, eval_label = bp_utils.fetch_datalist_with_label(conf.eval_data_path, conf)
     if conf.save_model_path.exists():
         model.load_weights(conf.save_model_path.as_posix(), by_name=True)
         logger.info("Loaded save model weight")
 
-    print(eval_data.shape)
-    print(eval_label.shape)
     eval = model.evaluate(x=eval_data,
                           y=eval_label,
                           batch_size=conf.batch_size,
@@ -82,3 +80,13 @@ if conf.stage in ['eval', 'all']:
                           sample_weight=conf.sample_weight)
     print("Evaluate result: {}".format(eval))
     logger.info("Finished evaluating")
+
+    preds = model.predict(eval_data)
+    precision, recall, f_measure = bp_utils.calc_f_measure(tests=eval_label,
+                                                           preds=preds)
+    fpr, tpr, roc_auc = bp_utils.calc_auc_roc(eval_label, preds)
+    bp_utils.draw_roc_auc([fpr],[tpr],[roc_auc],
+                          conf.save_model_root,
+                          {"class_title_list": ["class1", "class2", "class3"],
+                           "mic_mac_titles": ["micro", "macro"],
+                           "overall_title": 'All class ROC'})

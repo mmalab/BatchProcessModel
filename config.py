@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import bpm_utils
+import bp_utils
 # 公開できない情報をまとめたファイル
 import secrets
 
@@ -12,7 +12,7 @@ class Config:
     ## 'train': training only
     ## 'eval': evaluate only
     ## 'all': execute all
-    stage = 'all'
+    stage = 'eval'
 
     # Basic Parameter(all)
     ## When you save model, you must not use mounted file path
@@ -29,8 +29,8 @@ class Config:
     channel = 3
     max_queue_size = 10
     use_multiprocessing = False
-    train_list = bpm_utils.make_img_list(Path(data_path, 'train'))
-    val_list = bpm_utils.make_img_list(Path(data_path, 'validation'))
+    train_list = bp_utils.make_img_list(Path(data_path, 'train'))
+    val_list = bp_utils.make_img_list(Path(data_path, 'validation'))
     train_steps, val_steps = len(train_list), len(val_list)
     train_verbose = 1
     weights_path = Path('')
