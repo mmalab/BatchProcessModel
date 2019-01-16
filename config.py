@@ -66,6 +66,15 @@ class Config:
         self.clf_met = ['accuracy']
         self.clf_vis_path = Path(self.save_model_root, 'arch.png') # plot model's architecure
 
+        # For Classification
+        self.seg_class = 2
+        self.seg_lr = 0.0001
+        self.seg_loss = 'binary_crossentropy'
+        self.seg_mdl_name = "unet"
+        self.seg_opt = 'adam'
+        self.seg_met = ['mean_iou']
+        self.seg_vis_path = Path(self.save_model_root, 'arch.png') # plot model's architecure
+
         # For R-CNN
         self.rcnn_stage = 'all'
         self.rcnn_lr = 0.0001
